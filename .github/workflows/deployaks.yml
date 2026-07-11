@@ -39,7 +39,7 @@ jobs:
           type: deployment
           operation: 'create'
           scope: 'resourceGroup'
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           resource-group-name: ${{ vars.AZURE_RESOURCE_GROUP }}
           bicep-file: '${{ github.workspace }}/bicep/deployment.bicep'
           parameters-file: '${{ github.workspace }}/bicep/environments/dev.bicepparam'
