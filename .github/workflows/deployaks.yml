@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4        
-        
+
       - name: Azure login
         uses: azure/login@v2
         with:
@@ -30,8 +30,8 @@ jobs:
           scope: 'resourceGroup'
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           resource-group-name: ${{ vars.AZURE_RESOURCE_GROUP }}
-          bicep-file: '${{ vars.GITHUB_WORKSPACE }}/bicep/deployment.bicep'
-          parameters-file: '${{ vars.GITHUB_WORKSPACE }}/bicep/environments/dev.bicepparam'
+          bicep-file: '${{ github.workspace }}/bicep/deployment.bicep'
+          parameters-file: '${{ github.workspace }}/bicep/environments/dev.bicepparam'
 
       - name:  Deploy Bicep
         uses: Azure/bicep-deploy@v2.3.0
@@ -41,5 +41,5 @@ jobs:
           scope: 'resourceGroup'
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION }}
           resource-group-name: ${{ vars.AZURE_RESOURCE_GROUP }}
-          bicep-file: '${{ vars.GITHUB_WORKSPACE }}/bicep/deployment.bicep'
-          parameters-file: '${{ vars.GITHUB_WORKSPACE }}/bicep/environments/dev.bicepparam'
+          bicep-file: '${{ github.workspace }}/bicep/deployment.bicep'
+          parameters-file: '${{ github.workspace }}/bicep/environments/dev.bicepparam'
