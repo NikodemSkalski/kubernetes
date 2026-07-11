@@ -27,8 +27,8 @@ jobs:
           scope: 'resourceGroup'
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           resource-group-name: ${{ vars.AZURE_RESOURCE_GROUP }}
-          bicep-file: 'kubernetes/bicep/deployment.bicep'
-          parameters-file: 'kubernetes/bicep/environments/dev.bicepparam'
+          bicep-file: 'bicep/deployment.bicep'
+          parameters-file: 'bicep/environments/dev.bicepparam'
 
       - name:  Deploy Bicep
         uses: Azure/bicep-deploy@v2.3.0
@@ -38,5 +38,5 @@ jobs:
           scope: 'resourceGroup'
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION }}
           resource-group-name: ${{ vars.AZURE_RESOURCE_GROUP }}
-          bicep-file: 'kubernetes/bicep/deployment.bicep'
-          parameters-file: 'kubernetes/bicep/environments/dev.bicepparam'
+          bicep-file: 'bicep/deployment.bicep'
+          parameters-file: 'bicep/environments/dev.bicepparam'
