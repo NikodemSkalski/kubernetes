@@ -79,3 +79,7 @@ resource blobService 'Microsoft.Storage/storageAccounts/blobServices@2023-01-01'
   parent: storageAccount
   properties: blobServices
 }
+
+
+output storageAccountName string = storageAccount.name
+output blobContainerName string = blobService.name

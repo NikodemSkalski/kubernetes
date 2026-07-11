@@ -1,0 +1,37 @@
+name: 'deployaks'
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+
+jobs:
+  bicepdeploy:
+    name: 'Storage account Deploment and validation'
+    runs-on: ubuntu-latest
+    environment: development
+
+    steps:
+      - name: Validate Bicep
+        uses: Azure/bicep-deploy@v2.3.0
+        with:
+          type: 'bicep'
+          operation: 'validate'
+          scope: 'resource-group'
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          resource-group: ${{ vars.AZURE_RESOURCE_GROUP }}
+          bicep-file: 'kubernetes/bicep/deployment.bicep'
+          parameters-file: 'kubernetes/bicep/environments/dev.bicepparam'
+
+      - name:  Deploy Bicep
+        uses: Azure/bicep-deploy@v2.3.0
+        with:
+          type: 'bicep'
+          operation: 'deploy'
+          scope: 'resource-group'
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION }}
+          resource-group: ${{ vars.AZURE_RESOURCE_GROUP }}
+          bicep-file: 'kubernetes/bicep/deployment.bicep'
+          parameters-file: 'kubernetes/bicep/environments/dev.bicepparam'
