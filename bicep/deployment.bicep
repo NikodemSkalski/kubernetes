@@ -18,7 +18,7 @@ param environment string = 'dev'
 param kind string = 'StorageV2'
 
 @description('Optional. The SKU of the storage account')
-param blobContainerName string = ''
+param blobContainerNameParam string = ''
 
 @description('Optional. The SKU of the storage account')
 @allowed([
@@ -57,7 +57,7 @@ param allowBlobPublicAccess bool = false
 param isLocalUserEnabled bool = false
 
 var storageAccountName = empty(storageName) ? 'st${take('${environment}${uniqueString(resourceGroup().id, environment)}', 22)}' : storageName
-var blobName = empty(blobContainerName) ? 'container${uniqueString(resourceGroup().id, environment)}' : blobContainerName
+var blobContainerName = empty(blobContainerNameParam) ? 'container${uniqueString(resourceGroup().id, environment)}' : blobContainerNameParam
 
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
@@ -75,11 +75,19 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
 }
 
 resource blobService 'Microsoft.Storage/storageAccounts/blobServices@2023-01-01' = if (kind != 'FileStorage') {
-  name: blobName
+  name: 'default'
   parent: storageAccount
   properties: blobServices
 }
 
+resource blobContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2023-01-01' = if (kind != 'FileStorage') {
+  name: blobContainerName
+  parent: blobService
+  properties: {
+    publicAccess: 'None'
+  }
+}
+
 
 output storageAccountName string = storageAccount.name
-output blobContainerName string = blobService.name
+output blobContainerName string = blobContainer.name
