@@ -22,7 +22,7 @@ jobs:
       - name: Validate Bicep
         uses: Azure/bicep-deploy@v2.3.0
         with:
-          type: 'bicep'
+          type: deployment
           operation: 'validate'
           scope: 'resource-group'
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
@@ -33,7 +33,7 @@ jobs:
       - name:  Deploy Bicep
         uses: Azure/bicep-deploy@v2.3.0
         with:
-          type: 'bicep'
+          type: deployment
           operation: 'deploy'
           scope: 'resource-group'
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION }}
