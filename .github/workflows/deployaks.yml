@@ -37,7 +37,7 @@ jobs:
         uses: Azure/bicep-deploy@v2.3.0
         with:
           type: deployment
-          operation: 'deploy'
+          operation: 'create'
           scope: 'resourceGroup'
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION }}
           resource-group-name: ${{ vars.AZURE_RESOURCE_GROUP }}
