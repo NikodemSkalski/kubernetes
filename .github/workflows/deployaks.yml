@@ -14,6 +14,11 @@ jobs:
     environment: development
 
     steps:
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+            creds: ${{ secrets.AZURE_CREDENTIALS }}
+
       - name: Validate Bicep
         uses: Azure/bicep-deploy@v2.3.0
         with:
