@@ -14,6 +14,9 @@ jobs:
     environment: development
 
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4        
+
       - name: Azure login
         uses: azure/login@v2
         with:
