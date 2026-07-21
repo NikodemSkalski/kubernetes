@@ -45,7 +45,7 @@ jobs:
           bicep-file: '${{ github.workspace }}/bicep/ACR/acr.deployment.bicep'
           parameters-file: '${{ github.workspace }}/bicep/ACR/environments/dev.bicepparam'
 
-      - name: Set ACR Admin Login and Password as GitHub Secrets
+      - name: Get ACR Admin Login and Password
         uses: azure/CLI@v1
         with:
           inlineScript: |
@@ -55,6 +55,12 @@ jobs:
             echo "ACR_NAME=$ACR_NAME"
             echo "::add-mask::$ACR_ADMIN_USERNAME"
             echo "::add-mask::$ACR_ADMIN_PASSWORD"
-            gh secret set ACR_NAME --repo NikodemSkalski/devops-labs --body "$ACR_NAME"
-            gh secret set ACR_ADMIN_USERNAME --repo NikodemSkalski/devops-labs --body "$ACR_ADMIN_USERNAME"
-            gh secret set ACR_ADMIN_PASSWORD --repo NikodemSkalski/devops-labs --body "$ACR_ADMIN_PASSWORD"
+
+      - name: Set GitHub secrets and vars 
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh secret set ACR_NAME --repo NikodemSkalski/devops-labs --body "$ACR_NAME"
+          gh secret set ACR_ADMIN_USERNAME --repo NikodemSkalski/devops-labs --body "$ACR_ADMIN_USERNAME"
+          gh secret set ACR_ADMIN_PASSWORD --repo NikodemSkalski/devops-labs --body "$ACR_ADMIN_PASSWORD"
+
