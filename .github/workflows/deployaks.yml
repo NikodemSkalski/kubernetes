@@ -44,7 +44,7 @@ jobs:
           resource-group-name: ${{ vars.AZURE_RESOURCE_GROUP }}
           bicep-file: '${{ github.workspace }}/bicep/ACR/acr.deployment.bicep'
           parameters-file: '${{ github.workspace }}/bicep/ACR/environments/dev.bicepparam'
-
+    
       - name: Get ACR Admin Login and Password
         uses: azure/CLI@v1
         with:
@@ -55,7 +55,16 @@ jobs:
             echo "ACR_NAME=$ACR_NAME"
             echo "::add-mask::$ACR_ADMIN_USERNAME"
             echo "::add-mask::$ACR_ADMIN_PASSWORD"
-
+          
+      - name: Generate installation token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: NikodemSkalski
+          repositories: devops-labs
+          
       - name: Set GitHub secrets and vars 
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
