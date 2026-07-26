@@ -57,7 +57,7 @@ jobs:
             echo "::add-mask::$ACR_ADMIN_PASSWORD"
           
       - name: Generate installation token
-        id: app-token
+        id: generate-gh-token
         uses: actions/create-github-app-token@v1
         with:
           app-id: ${{ secrets.APP_ID }}
@@ -67,7 +67,7 @@ jobs:
           
       - name: Set GitHub secrets and vars 
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ steps.generate-gh-token.outputs.token }} 
         run: |
           gh secret set ACR_NAME --repo NikodemSkalski/devops-labs --body "$ACR_NAME"
           gh secret set ACR_ADMIN_USERNAME --repo NikodemSkalski/devops-labs --body "$ACR_ADMIN_USERNAME"
