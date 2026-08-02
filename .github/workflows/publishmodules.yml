@@ -26,9 +26,11 @@ jobs:
           
       - name: Check out my other private repo
         uses: actions/checkout@v4
+        env:
+          GH_TOKEN: ${{ steps.generate-gh-token.outputs.token }} 
         with:
             repository: NikodemSkalski/infra-modules
-            token: ${{ secrets.GITHUB_TOKEN }}
+            token: ${{ secrets.GH_TOKEN }}
           
       - name: Azure login
         uses: azure/login@v2
@@ -38,20 +40,16 @@ jobs:
 
       - name: Find and publish Bicep modules
         shell: pwsh
+        env:
+          ACR_NAME: ${{ vars.ACR_NAME }}
         run:
+          $tag = "${{ github.run_id }}.${{ github.run_number }}.${{ github.run_attempt }}"
           $modulesRoot = "${{ github.workspace }}/bicep/modules"
           $items = Get-ChildItem -Recurse -Path $modulesRoot -Filter "main.bicep"
           foreach ($item in $items) {
               $parentPath = $item.DirectoryName
               $relativePath = $parentPath.Replace($modulesRoot, "").Replace("\", "/")
-              $target = "br:$(acrLoginServer)/$relativePath:$(tag)"
+              $target = "br:$env:ACR_NAME/$relativePath:$(tag)"
               az bicep publish --file $item.FullName --target $target --with-source
           }
       
-      - name: Publish Bicep Modules
-        uses: Azure/cli@v1
-        with:
-          type: 'module'
-          operation: 'publish'
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          bicep-file-paths: '${{ github.workspace }}/bicep/modules/**/*.bicep'
