@@ -73,6 +73,7 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.generate-gh-token.outputs.token }} 
         run: |
+          echo "ACR_NAME=$ACR_NAME"
           gh variable set ACR_NAME --repo NikodemSkalski/kubernetes --body "$ACR_NAME"
           gh variable set ACR_NAME --repo NikodemSkalski/devops-labs --body "$ACR_NAME"
           gh secret set ACR_ADMIN_USERNAME --repo NikodemSkalski/devops-labs --body "$ACR_ADMIN_USERNAME"
