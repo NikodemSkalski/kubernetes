@@ -1,0 +1,48 @@
+name: 'publishmodules'
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publishmodules:
+    name: 'Publish Bicep Modules'
+    runs-on: ubuntu-latest
+    environment: development
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4        
+
+      - name: Check out my other private repo
+        uses: actions/checkout@v4
+        with:
+            repository: NikodemSkalski/infra-modules
+            token: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+            creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+
+      - name: Find and publish Bicep modules
+        shell: pwsh
+        run:
+          $modulesRoot = "${{ github.workspace }}/bicep/modules"
+          $items = Get-ChildItem -Recurse -Path $modulesRoot -Filter "main.bicep"
+          foreach ($item in $items) {
+              $parentPath = $item.DirectoryName
+              $relativePath = $parentPath.Replace($modulesRoot, "").Replace("\", "/")
+              $target = "br:$(acrLoginServer)/$relativePath:$(tag)"
+              az bicep publish --file $item.FullName --target $target --with-source
+          }
+      
+      - name: Publish Bicep Modules
+        uses: Azure/cli@v1
+        with:
+          type: 'module'
+          operation: 'publish'
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          bicep-file-paths: '${{ github.workspace }}/bicep/modules/**/*.bicep'
