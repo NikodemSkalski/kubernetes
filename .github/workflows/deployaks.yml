@@ -67,6 +67,8 @@ jobs:
           echo "::add-mask::$ACR_ADMIN_USERNAME"
           echo "::add-mask::$ACR_ADMIN_PASSWORD"
           gh variable set ACR_NAME --repo NikodemSkalski/kubernetes --body "$ACR_NAME"
+          gh secret set ACR_ADMIN_USERNAME --repo NikodemSkalski/kubernetes --body "$ACR_ADMIN_USERNAME"
+          gh secret set ACR_ADMIN_PASSWORD --repo NikodemSkalski/kubernetes --body "$ACR_ADMIN_PASSWORD"
           gh variable set ACR_NAME --repo NikodemSkalski/devops-labs --body "$ACR_NAME"
           gh secret set ACR_ADMIN_USERNAME --repo NikodemSkalski/devops-labs --body "$ACR_ADMIN_USERNAME"
           gh secret set ACR_ADMIN_PASSWORD --repo NikodemSkalski/devops-labs --body "$ACR_ADMIN_PASSWORD"
