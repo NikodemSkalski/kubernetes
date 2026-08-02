@@ -26,11 +26,9 @@ jobs:
           
       - name: Check out my other private repo
         uses: actions/checkout@v4
-        env:
-          GH_TOKEN: ${{ steps.generate-gh-token.outputs.token }} 
         with:
             repository: NikodemSkalski/infra-modules
-            token: ${{ secrets.GH_TOKEN }}
+            token: ${{ steps.generate-gh-token.outputs.token }} 
           
       - name: Azure login
         uses: azure/login@v2
