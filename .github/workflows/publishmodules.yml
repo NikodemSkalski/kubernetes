@@ -49,7 +49,7 @@ jobs:
           foreach ($item in $items) {
               $parentPath = $item.DirectoryName
               $relativePath = $parentPath.Replace($modulesRoot, "").Replace("\", "/")
-              $target = "br:$env:ACR_NAME/${relativePath}:$(tag)"
+              $target = "br:$env:ACR_NAME/${relativePath}:${tag}"
               az bicep publish --file $item.FullName --target $target --with-source
           }
       
