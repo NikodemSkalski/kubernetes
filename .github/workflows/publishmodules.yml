@@ -40,7 +40,7 @@ jobs:
         shell: pwsh
         env:
           ACR_NAME: ${{ vars.ACR_NAME }}
-        run:
+        run: |
           $tag = "${{ github.run_id }}.${{ github.run_number }}.${{ github.run_attempt }}"
           $modulesRoot = "${{ github.workspace }}/bicep/modules"
           $items = Get-ChildItem -Recurse -Path $modulesRoot -Filter "main.bicep"
