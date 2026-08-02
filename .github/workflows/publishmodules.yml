@@ -30,10 +30,12 @@ jobs:
             repository: NikodemSkalski/infra-modules
             token: ${{ steps.generate-gh-token.outputs.token }} 
           
-      - name: Azure login
-        uses: azure/login@v2
+      - name: Login to ACR
+        uses: docker/login-action@v3
         with:
-            creds: ${{ secrets.AZURE_CREDENTIALS }}
+          registry: ${{ vars.ACR_NAME }}.azurecr.io
+          username: ${{ secrets.ACR_ADMIN_USERNAME }}
+          password: ${{ secrets.ACR_ADMIN_PASSWORD }}
 
 
       - name: Find and publish Bicep modules
@@ -47,7 +49,7 @@ jobs:
           foreach ($item in $items) {
               $parentPath = $item.DirectoryName
               $relativePath = $parentPath.Replace($modulesRoot, "").Replace("\", "/")
-              $target = "br:$env:ACR_NAME/$relativePath:$(tag)"
+              $target = "br:$env:ACR_NAME/$(relativePath):$(tag)"
               az bicep publish --file $item.FullName --target $target --with-source
           }
       
