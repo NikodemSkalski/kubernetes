@@ -44,7 +44,7 @@ jobs:
           ACR_NAME: ${{ vars.ACR_NAME }}
         run: |
           $tag = "${{ github.run_id }}.${{ github.run_number }}.${{ github.run_attempt }}"
-          $modulesRoot = "${{ github.workspace }}/bicep/modules"
+          $modulesRoot = "${{ github.workspace }}/bicep/modules/"
           $items = Get-ChildItem -Recurse -Path $modulesRoot -Filter "main.bicep"
           foreach ($item in $items) {
               $parentPath = $item.DirectoryName
