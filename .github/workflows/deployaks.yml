@@ -58,7 +58,7 @@ jobs:
             
       - name: Get ACR Admin Login and Password
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ steps.generate-gh-token.outputs.token }} 
         run: |
           ACR_NAME=$(az deployment group show --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} --name acrDeploymentDev --query "properties.outputs.registryLoginServer.value" -o tsv)
           ACR_ADMIN_USERNAME=$(az acr credential show --name $ACR_NAME --query "username" -o tsv)
