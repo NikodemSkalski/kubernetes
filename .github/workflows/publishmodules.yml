@@ -14,7 +14,16 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4        
-
+          
+      - name: Generate installation token
+        id: generate-gh-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: NikodemSkalski
+          repositories: infra-modules
+          
       - name: Check out my other private repo
         uses: actions/checkout@v4
         with:
