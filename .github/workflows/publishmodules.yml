@@ -37,6 +37,10 @@ jobs:
           username: ${{ secrets.ACR_ADMIN_USERNAME }}
           password: ${{ secrets.ACR_ADMIN_PASSWORD }}
 
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+            creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Find and publish Bicep modules
         shell: pwsh
