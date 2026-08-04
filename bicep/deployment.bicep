@@ -57,37 +57,20 @@ param allowBlobPublicAccess bool = false
 param isLocalUserEnabled bool = false
 
 var storageAccountName = empty(storageName) ? 'st${take('${environment}${uniqueString(resourceGroup().id, environment)}', 22)}' : storageName
-var blobContainerName = empty(blobContainerNameParam) ? 'container${uniqueString(resourceGroup().id, environment)}' : blobContainerNameParam
+var blobContainerName = empty(blobContainerNameParam) ? '${environment}-statefile' : blobContainerNameParam
 
-
-resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
-  name: storageAccountName
-  location: location
-  kind: kind
-  sku: {
-    name: skuName
-  }
-  properties: {
+module globalStorageAccount 'br:develop:modules/storage-account/main.bicep' = {
+  name: 'globalStorageAccount'
+  params: {
+    storageName: storageAccountName
+    location: location
+    environment: environment
+    kind: kind
+    skuName: skuName
+    publicNetworkAccess: publicNetworkAccess
+    blobServices: blobServices
     allowBlobPublicAccess: allowBlobPublicAccess
     isLocalUserEnabled: isLocalUserEnabled
-    publicNetworkAccess: publicNetworkAccess
+    blobContainerName: blobContainerName
   }
 }
-
-resource blobService 'Microsoft.Storage/storageAccounts/blobServices@2023-01-01' = if (kind != 'FileStorage') {
-  name: 'default'
-  parent: storageAccount
-  properties: blobServices
-}
-
-resource blobContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2023-01-01' = if (kind != 'FileStorage') {
-  name: blobContainerName
-  parent: blobService
-  properties: {
-    publicAccess: 'None'
-  }
-}
-
-
-output storageAccountName string = storageAccount.name
-output blobContainerName string = blobContainer.name

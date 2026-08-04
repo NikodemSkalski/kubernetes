@@ -54,6 +54,8 @@ jobs:
               $parentPath = $item.DirectoryName
               $relativePath = $parentPath.Replace($modulesRoot, "").Replace("\", "/")
               $target = "br:$env:ACR_NAME/${relativePath}:${tag}"
+              $targetLatest = "br:$env:ACR_NAME/${relativePath}:latest"
               az bicep publish --file $item.FullName --target $target --with-source
+              az bicep publish --file $item.FullName --target $targetLatest --with-source
           }
       

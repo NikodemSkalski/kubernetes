@@ -1,4 +1,4 @@
-name: 'deployaks'
+name: 'manual-init-env'
 
 on:
   workflow_dispatch:
@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   bicepdeploy:
-    name: 'Storage account Deploment and validation'
+    name: 'Deploy ACR and set secrets'
     runs-on: ubuntu-latest
     environment: development
 
