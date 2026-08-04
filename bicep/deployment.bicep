@@ -71,6 +71,6 @@ module globalStorageAccount 'br/develop:storage:latest' = {
     blobServices: blobServices
     allowBlobPublicAccess: allowBlobPublicAccess
     isLocalUserEnabled: isLocalUserEnabled
-    blobContainerName: blobContainerName
+    blobContainerNameParam: blobContainerName
   }
 }
