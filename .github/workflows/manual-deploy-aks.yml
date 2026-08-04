@@ -17,6 +17,16 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4        
 
+      - name: Set alias for bicep modules
+        shell: pwsh
+        env:
+          ACR_NAME: ${{ vars.ACR_NAME }}
+        run: |
+            $bicepConfigPath = "${{ github.workspace }}/bicep/bicepconfig.json"
+            $bicepConfig = Get-Content -Path $bicepConfigPath | ConvertFrom-Json
+            $bicepConfig.moduleAliases.br.develop.registry = "$env:ACR_NAME"
+            $bicepConfig | ConvertTo-Json -Depth 10 | Set-Content -Path $bicepConfigPath
+
       - name: Azure login
         uses: azure/login@v2
         with:
@@ -28,7 +38,7 @@ jobs:
           registry: ${{ vars.ACR_NAME }}
           username: ${{ secrets.ACR_ADMIN_USERNAME }}
           password: ${{ secrets.ACR_ADMIN_PASSWORD }}
-          
+
       - name: Validate Bicep
         uses: Azure/bicep-deploy@v2.3.0
         with:
