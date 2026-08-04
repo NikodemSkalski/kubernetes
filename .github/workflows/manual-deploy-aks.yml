@@ -49,3 +49,17 @@ jobs:
           resource-group-name: ${{ vars.AZURE_RESOURCE_GROUP }}
           bicep-file: '${{ github.workspace }}/bicep/deployment.bicep'
           parameters-file: '${{ github.workspace }}/bicep/environments/dev.bicepparam'
+
+          
+      - name:  Deploy Bicep
+        uses: Azure/bicep-deploy@v2.3.0
+        with:
+          type: deployment
+          operation: 'create'
+          name: 'deployGlobalStorage'
+          scope: 'resourceGroup'
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          resource-group-name: ${{ vars.AZURE_RESOURCE_GROUP }}
+          bicep-file: '${{ github.workspace }}/bicep/deployment.bicep'
+          parameters-file: '${{ github.workspace }}/bicep/environments/dev.bicepparam'
+              
