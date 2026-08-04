@@ -59,7 +59,7 @@ param isLocalUserEnabled bool = false
 var storageAccountName = empty(storageName) ? 'st${take('${environment}${uniqueString(resourceGroup().id, environment)}', 22)}' : storageName
 var blobContainerName = empty(blobContainerNameParam) ? '${environment}-statefile' : blobContainerNameParam
 
-module globalStorageAccount 'br/develop:modules/storage' = {
+module globalStorageAccount 'br/develop:modules/storage:latest' = {
   name: 'globalStorageAccount'
   params: {
     storageName: storageAccountName
