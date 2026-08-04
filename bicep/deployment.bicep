@@ -59,7 +59,7 @@ param isLocalUserEnabled bool = false
 var storageAccountName = empty(storageName) ? 'st${take('${environment}${uniqueString(resourceGroup().id, environment)}', 22)}' : storageName
 var blobContainerName = empty(blobContainerNameParam) ? '${environment}-statefile' : blobContainerNameParam
 
-module globalStorageAccount 'br:develop:modules/storage-account/main.bicep' = {
+module globalStorageAccount 'br/develop:modules/storage' = {
   name: 'globalStorageAccount'
   params: {
     storageName: storageAccountName
