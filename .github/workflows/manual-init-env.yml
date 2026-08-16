@@ -14,36 +14,12 @@ jobs:
     environment: development
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4        
-
-      - name: Azure login
-        uses: azure/login@v2
+      
+      - uses: nikodemskalski/kubernetes/.github/workflows/templates/steps/bicep-deploy.yml@master
         with:
-            creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Validate Bicep
-        uses: Azure/bicep-deploy@v2.3.0
-        with:
-          type: deployment
-          operation: 'validate'
-          scope: 'resourceGroup'
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          resource-group-name: ${{ vars.AZURE_RESOURCE_GROUP }}
+          environment: development
           bicep-file: '${{ github.workspace }}/bicep/ACR/acr.deployment.bicep'
-          parameters-file: '${{ github.workspace }}/bicep/ACR/environments/dev.bicepparam'
-
-      - name:  Deploy Bicep
-        uses: Azure/bicep-deploy@v2.3.0
-        with:
-          type: deployment
-          operation: 'create'
-          name: 'acrDeploymentDev'
-          scope: 'resourceGroup'
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          resource-group-name: ${{ vars.AZURE_RESOURCE_GROUP }}
-          bicep-file: '${{ github.workspace }}/bicep/ACR/acr.deployment.bicep'
-          parameters-file: '${{ github.workspace }}/bicep/ACR/environments/dev.bicepparam'
+          parameters-file-path: '${{ github.workspace }}/bicep/ACR/environments/dev.bicepparam'
               
       - name: Generate installation token
         id: generate-gh-token

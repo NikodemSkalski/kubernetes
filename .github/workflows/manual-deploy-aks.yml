@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   call-bicep-deploy:
-    uses: NikodemSkalski/kubernetes/.github/workflows/templates/steps/bicep-deploy.yml@master
+    uses: NikodemSkalski/kubernetes/.github/workflows/templates/workflows/bicep-deploy.yml@master
     with:
       environment: development
       bicep-file: '${{ github.workspace }}/bicep/deployment.bicep'

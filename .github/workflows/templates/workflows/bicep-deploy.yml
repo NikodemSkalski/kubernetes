@@ -1,0 +1,33 @@
+name: Reusable bicep deploy workflow
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      bicep-file:
+        required: true
+        type: string
+        default: '${{ github.workspace }}/bicep/deployment.bicep'
+      parameters-file-path:
+        required: true
+        type: string
+        default: '${{ github.workspace }}/bicep/environments/dev.bicepparam'
+
+jobs:
+  bicepdeploy:
+    name: 'Storage account Deploment and validation'
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+
+    defaults:
+      run:
+        shell: pwsh
+
+    steps:
+      - uses: nikodemskalski/kubernetes/.github/workflows/templates/steps/bicep-deploy.yml@master
+        with:
+          environment: ${{ inputs.environment }}
+          bicep-file: '${{ inputs.bicep-file }}'
+          parameters-file-path: '${{ inputs.parameters-file-path }}'
