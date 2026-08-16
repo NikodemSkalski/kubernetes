@@ -14,8 +14,11 @@ jobs:
     environment: development
 
     steps:
-      
-      - uses: nikodemskalski/kubernetes/.github/actions/bicep-deploy-steps@master
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - id: bicep-acr-deploy
+        uses: nikodemskalski/kubernetes/.github/actions/bicep-deploy-steps@master
         with:
           environment: development
           bicep-file: '${{ github.workspace }}/bicep/ACR/acr.deployment.bicep'
@@ -38,8 +41,8 @@ jobs:
       - name: Get ACR Admin Login and Password
         env:
           GH_TOKEN: ${{ steps.generate-gh-token.outputs.token }} 
+          ACR_NAME: ${{ steps.bicep-acr-deploy.outputs.registryName }}
         run: |
-          ACR_NAME=$(az deployment group show --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} --name acrDeploymentDev --query "properties.outputs.registryLoginServer.value" -o tsv)
           ACR_ADMIN_USERNAME=$(az acr credential show --name $ACR_NAME --query "username" -o tsv)
           ACR_ADMIN_PASSWORD=$(az acr credential show --name $ACR_NAME --query "passwords[0].value" -o tsv)
           echo "ACR_NAME=$ACR_NAME"
