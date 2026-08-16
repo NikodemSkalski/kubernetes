@@ -44,7 +44,7 @@ jobs:
         shell: pwsh
 
     steps:
-      - uses: nikodemskalski/kubernetes/.github/actions/bicep-deploy-steps/action.yml@master
+      - uses: nikodemskalski/kubernetes/.github/actions/bicep-deploy-steps@master
         with:
           environment: ${{ inputs.environment }}
           bicep-file: '${{ inputs.bicep-file }}'
