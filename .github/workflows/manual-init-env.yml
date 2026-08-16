@@ -41,9 +41,9 @@ jobs:
       - name: Get ACR Admin Login and Password
         env:
           GH_TOKEN: ${{ steps.generate-gh-token.outputs.token }} 
-          ACR_NAME: ${{ steps.bicep-acr-deploy.outputs.registryName }}
+          ACR_NAME: ${{ fromJSON(steps.bicep-acr-deploy.outputs.deployment-outputs).acrName }}
+          ACR_ADMIN_USERNAME: ${{ fromJSON(steps.bicep-acr-deploy.outputs.deployment-outputs).registryLoginServer }}
         run: |
-          ACR_ADMIN_USERNAME=$(az acr credential show --name $ACR_NAME --query "username" -o tsv)
           ACR_ADMIN_PASSWORD=$(az acr credential show --name $ACR_NAME --query "passwords[0].value" -o tsv)
           echo "ACR_NAME=$ACR_NAME"
           echo "::add-mask::$ACR_ADMIN_USERNAME"
