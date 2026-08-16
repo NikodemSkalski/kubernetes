@@ -15,12 +15,18 @@ jobs:
 
     steps:
       
-      - uses: nikodemskalski/kubernetes/.github/workflows/templates/steps/bicep-deploy.yml@master
+      - uses: nikodemskalski/kubernetes/.github/actions/bicep-deploy-steps/action.yml@master
         with:
           environment: development
           bicep-file: '${{ github.workspace }}/bicep/ACR/acr.deployment.bicep'
           parameters-file-path: '${{ github.workspace }}/bicep/ACR/environments/dev.bicepparam'
-              
+          acr-name: ${{ vars.ACR_NAME }}
+          acr-admin-username: ${{ vars.ACR_ADMIN_USERNAME }}
+          acr-admin-password: ${{ vars.ACR_ADMIN_PASSWORD }}
+          azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
+          azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          azure-resource-group: ${{ vars.AZURE_RESOURCE_GROUP }}
+
       - name: Generate installation token
         id: generate-gh-token
         uses: actions/create-github-app-token@v1

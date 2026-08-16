@@ -1,0 +1,57 @@
+name: Reusable bicep deploy workflow
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      bicep-file:
+        required: true
+        type: string
+        default: '${{ github.workspace }}/bicep/deployment.bicep'
+      parameters-file-path:
+        required: true
+        type: string
+        default: '${{ github.workspace }}/bicep/environments/dev.bicepparam'
+      acr-name:
+        required: true
+        type: string
+      acr-admin-username:
+        required: true
+        type: string
+      acr-admin-password:
+        required: true
+        type: string
+      azure-credentials:
+        required: true
+        type: string
+      azure-subscription-id:
+        required: true
+        type: string
+      azure-resource-group:
+        required: true
+        type: string
+
+jobs:
+  bicepdeploy:
+    name: 'Storage account Deploment and validation'
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+
+    defaults:
+      run:
+        shell: pwsh
+
+    steps:
+      - uses: nikodemskalski/kubernetes/.github/actions/bicep-deploy-steps/action.yml@master
+        with:
+          environment: ${{ inputs.environment }}
+          bicep-file: '${{ inputs.bicep-file }}'
+          parameters-file-path: '${{ inputs.parameters-file-path }}'
+          acr-name: ${{ inputs.acr-name }}
+          acr-admin-username: ${{ secrets.ACR_ADMIN_USERNAME }}
+          acr-admin-password: ${{ secrets.ACR_ADMIN_PASSWORD }}
+          azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
+          azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          azure-resource-group: ${{ secrets.AZURE_RESOURCE_GROUP }}

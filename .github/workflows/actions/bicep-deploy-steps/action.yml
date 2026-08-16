@@ -1,0 +1,86 @@
+name: Reusable bicep deploy composite action
+description: Reusable composite action for deploying Bicep templates
+
+
+inputs:
+  environment:
+    required: true
+    type: string
+  bicep-file:
+    required: true
+    type: string
+    default: '${{ github.workspace }}/bicep/deployment.bicep'
+  parameters-file-path:
+    required: true
+    type: string
+    default: '${{ github.workspace }}/bicep/environments/dev.bicepparam'
+  acr-name:
+    required: true
+    type: string
+  acr-admin-username:
+    required: true
+    type: string
+  acr-admin-password:
+    required: true
+    type: string
+  azure-credentials:
+    required: true
+    type: string
+  azure-subscription-id:
+    required: true
+    type: string
+  azure-resource-group:
+    required: true
+    type: string
+
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4        
+
+    - name: Set alias for bicep modules
+      shell: pwsh
+      env:
+        ACR_NAME: ${{ inputs.acr-name }}
+      run: |
+          $bicepConfigPath = "${{ github.workspace }}/bicep/bicepconfig.json"
+          $bicepConfig = Get-Content -Path $bicepConfigPath | ConvertFrom-Json
+          $bicepConfig.moduleAliases.br.develop.registry = "$env:ACR_NAME"
+          $bicepConfig | ConvertTo-Json -Depth 10 | Set-Content -Path $bicepConfigPath
+
+    - name: Azure login
+      uses: azure/login@v2
+      with:
+          creds: ${{ inputs.azure-credentials }}
+        
+    - name: Login to ACR
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ inputs.acr-name }}
+        username: ${{ inputs.acr-admin-username }}
+        password: ${{ inputs.acr-admin-password }}
+
+    - name: Validate Bicep
+      uses: Azure/bicep-deploy@v2.3.0
+      with:
+        type: deployment
+        operation: 'validate'
+        scope: 'resourceGroup'
+        subscription-id: ${{ inputs.azure-subscription-id }}
+        resource-group-name: ${{ inputs.azure-resource-group }}
+        bicep-file: '${{ inputs.bicep-file }}'
+        parameters-file: '${{ inputs.parameters-file-path }}'
+
+
+    - name: Validate Bicep
+      uses: Azure/bicep-deploy@v2.3.0
+      with:
+        type: deployment
+        operation: 'validate'
+        scope: 'resourceGroup'
+        subscription-id: ${{ inputs.azure-subscription-id }}
+        resource-group-name: ${{ inputs.azure-resource-group }}
+        bicep-file: '${{ inputs.bicep-file }}'
+        parameters-file: '${{ inputs.parameters-file-path }}'

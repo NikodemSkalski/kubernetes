@@ -9,11 +9,15 @@ permissions:
 
 jobs:
   call-bicep-deploy:
-    uses: NikodemSkalski/kubernetes/.github/workflows/templates/workflows/bicep-deploy.yml@master
+    uses: NikodemSkalski/kubernetes/.github/workflows/templates.jobs.bicep-deploy.yml@master
     with:
       environment: development
       bicep-file: '${{ github.workspace }}/bicep/deployment.bicep'
       parameters-file-path: '${{ github.workspace }}/bicep/environments/dev.bicepparam'
+      acr-name: ${{ vars.ACR_NAME }}
+      acr-admin-username: ${{ vars.ACR_ADMIN_USERNAME }}
+      acr-admin-password: ${{ vars.ACR_ADMIN_PASSWORD }}
+      azure-resource-group: ${{ vars.AZURE_RESOURCE_GROUP }}
 
   kubernetesdeploy:
     needs: call-bicep-deploy
