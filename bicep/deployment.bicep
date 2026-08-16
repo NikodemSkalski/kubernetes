@@ -74,3 +74,6 @@ module globalStorageAccount 'br/develop:storage:latest' = {
     blobContainerNameParam: blobContainerName
   }
 }
+
+output storageAccountName string = globalStorageAccount.outputs.storageAccountName
+output blobContainerName string = globalStorageAccount.outputs.blobContainerName

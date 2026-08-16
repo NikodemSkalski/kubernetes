@@ -8,8 +8,16 @@ permissions:
 
 
 jobs:
-  bicepdeploy:
-    name: 'Storage account Deploment and validation'
+  call-bicep-deploy:
+    uses: NikodemSkalski/kubernetes/.github/workflows/templates/steps/bicep-deploy.yml@master
+    with:
+      environment: development
+      bicep-file: '${{ github.workspace }}/bicep/deployment.bicep'
+      parameters-file-path: '${{ github.workspace }}/bicep/environments/dev.bicepparam'
+
+  kubernetesdeploy:
+    needs: call-bicep-deploy
+    name: 'Deploy AKS'
     runs-on: ubuntu-latest
     environment: development
 
@@ -17,49 +25,25 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4        
 
-      - name: Set alias for bicep modules
-        shell: pwsh
-        env:
-          ACR_NAME: ${{ vars.ACR_NAME }}
-        run: |
-            $bicepConfigPath = "${{ github.workspace }}/bicep/bicepconfig.json"
-            $bicepConfig = Get-Content -Path $bicepConfigPath | ConvertFrom-Json
-            $bicepConfig.moduleAliases.br.develop.registry = "$env:ACR_NAME"
-            $bicepConfig | ConvertTo-Json -Depth 10 | Set-Content -Path $bicepConfigPath
-
       - name: Azure login
         uses: azure/login@v2
         with:
-            creds: ${{ secrets.AZURE_CREDENTIALS }}
-          
-      - name: Login to ACR
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ vars.ACR_NAME }}
-          username: ${{ secrets.ACR_ADMIN_USERNAME }}
-          password: ${{ secrets.ACR_ADMIN_PASSWORD }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Validate Bicep
-        uses: Azure/bicep-deploy@v2.3.0
-        with:
-          type: deployment
-          operation: 'validate'
-          scope: 'resourceGroup'
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          resource-group-name: ${{ vars.AZURE_RESOURCE_GROUP }}
-          bicep-file: '${{ github.workspace }}/bicep/deployment.bicep'
-          parameters-file: '${{ github.workspace }}/bicep/environments/dev.bicepparam'
+      - name: Set STORAGE_NAME and BLOB_CONTAINER_NAME variables for terraform
+        id: set-terraform-vars
+        run: |            
+            TERRAFORM_STORAGE_NAME=$(az deployment group show --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} --name deployGlobalStorage --query "properties.globalStorageAccount.outputs.storageAccountName.value" -o tsv)
+            TERRAFORM_BLOB_CONTAINER_NAME=$(az deployment group show --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} --name deployGlobalStorage --query "properties.globalStorageAccount.outputs.blobContainerName.value" -o tsv)
+            Write-Host "STORAGE_NAME=$TERRAFORM_STORAGE_NAME"
+            Write-Host "BLOB_CONTAINER_NAME=$TERRAFORM_BLOB_CONTAINER_NAME"
+            $expiry = (Get-Date).ToUniversalTime().AddHours(1).ToString("yyyy-MM-ddTHH:mm:ssZ")
+            $SAS_TOKEN = az storage container generate-sas --account-name $TERRAFORM_STORAGE_NAME --name $TERRAFORM_BLOB_CONTAINER_NAME --permissions rwdlc --expiry $expiry --https-only
+            "::add-mask::$SAS_TOKEN" >> $env:GITHUB_OUTPUT
+            "sas=$SAS_TOKEN" >> $env:GITHUB_OUTPUT
 
-          
-      - name:  Deploy Bicep
-        uses: Azure/bicep-deploy@v2.3.0
-        with:
-          type: deployment
-          operation: 'create'
-          name: 'deployGlobalStorage'
-          scope: 'resourceGroup'
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          resource-group-name: ${{ vars.AZURE_RESOURCE_GROUP }}
-          bicep-file: '${{ github.workspace }}/bicep/deployment.bicep'
-          parameters-file: '${{ github.workspace }}/bicep/environments/dev.bicepparam'
-              
+      - name: Terraform init
+        working-directory: '${{ github.workspace }}/terraform'
+        env:
+          ARM_SAS_TOKEN: ${{ steps.set-terraform-vars.outputs.sas }}
+        run: terraform init                
