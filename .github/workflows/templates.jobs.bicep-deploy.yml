@@ -17,12 +17,15 @@ on:
       acr-name:
         required: true
         type: string
+        default: ''
       acr-admin-username:
         required: true
         type: string
+        default: ''
       acr-admin-password:
         required: true
         type: string
+        default: ''
       azure-credentials:
         required: true
         type: string
