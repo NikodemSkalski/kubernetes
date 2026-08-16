@@ -9,11 +9,11 @@ on:
       bicep-file:
         required: true
         type: string
-				default: '${{ github.workspace }}/bicep/deployment.bicep'
+        default: '${{ github.workspace }}/bicep/deployment.bicep'
       parameters-file-path:
         required: true
         type: string
-				default: '${{ github.workspace }}/bicep/environments/dev.bicepparam'
+        default: '${{ github.workspace }}/bicep/environments/dev.bicepparam'
 
 jobs:
 	bicepdeploy:
