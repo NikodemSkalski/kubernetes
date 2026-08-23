@@ -43,7 +43,7 @@ inputs:
 outputs:
   deployment-outputs:
     description: 'All outputs from the Bicep deployment, as JSON'
-    value: ${{ toJSON(steps.bicep-deploy.outputs) }}
+    value: ${{ steps.bicep-deploy.outputs }}
 
 runs:
   using: "composite"
@@ -99,8 +99,3 @@ runs:
         resource-group-name: ${{ inputs.azure-resource-group }}
         template-file: '${{ inputs.bicep-file }}'
         parameters-file: '${{ inputs.parameters-file-path }}'
-
-    - name: Output deployment outputs
-      shell: pwsh
-      run: |
-        echo "${{ toJSON(steps.bicep-deploy.outputs) }}"
