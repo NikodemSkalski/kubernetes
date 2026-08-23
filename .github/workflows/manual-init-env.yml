@@ -46,9 +46,10 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.generate-gh-token.outputs.token }} 
           ACR_NAME: ${{ fromJSON(steps.bicep-acr-deploy.outputs.deployment-outputs).registryName }}
-          RAW_OUTPUT: ${{ fromJSON(steps.bicep-acr-deploy.outputs.deployment-outputs) }}
+          RAW_OUTPUT: ${{ steps.bicep-acr-deploy.outputs.deployment-outputs }}
         run: |
-          echo "RAW_OUTPUT=$RAW_OUTPUT"
+          $out = $env:RAW_OUTPUT | ConvertFrom-Json
+          write-host "Deployment Outputs: $out"
           echo "ACR_NAME=$ACR_NAME"
           $ACR_ADMIN_USERNAME=$(az acr credential show --name $ACR_NAME --query "username" -o tsv)
           if(!$ACR_ADMIN_USERNAME) {
