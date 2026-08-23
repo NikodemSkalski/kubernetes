@@ -43,7 +43,7 @@ inputs:
 outputs:
   deployment-outputs:
     description: 'All outputs from the Bicep deployment, as JSON'
-    value: ${{ toJSON(steps.bicep-deploy.outputs) }}
+    value: ${{ steps.bicep-deploy.outputs }}
 
 runs:
   using: "composite"
