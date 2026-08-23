@@ -48,7 +48,8 @@ jobs:
           ACR_NAME: ${{ fromJSON(steps.bicep-acr-deploy.outputs.deployment-outputs).registryName }}
           RAW_OUTPUT: ${{ steps.bicep-acr-deploy.outputs.deployment-outputs }}
         run: |
-          $out = $env:RAW_OUTPUT | ConvertFrom-Json
+          $out = $env:RAW_OUTPUT | ConvertFrom-Json -depth 10
+          $out | gm
           write-host "Deployment Outputs: $out"
           echo "ACR_NAME=$ACR_NAME"
           $ACR_ADMIN_USERNAME=$(az acr credential show --name $ACR_NAME --query "username" -o tsv)
