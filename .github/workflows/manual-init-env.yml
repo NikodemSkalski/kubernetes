@@ -47,6 +47,7 @@ jobs:
           GH_TOKEN: ${{ steps.generate-gh-token.outputs.token }} 
           ACR_NAME: ${{ fromJSON(steps.bicep-acr-deploy.outputs.deployment-outputs).registryName }}
         run: |
+          echo "ACR_NAME=$ACR_NAME"
           $ACR_ADMIN_USERNAME=$(az acr credential show --name $ACR_NAME --query "username" -o tsv)
           if(!$ACR_ADMIN_USERNAME) {
             Write-Host "ACR Admin Username is empty. Exiting."
@@ -57,7 +58,6 @@ jobs:
             Write-Host "ACR Admin Password is empty. Exiting."
             exit 1
           }
-          echo "ACR_NAME=$ACR_NAME"
           echo "::add-mask::$ACR_ADMIN_USERNAME"
           echo "::add-mask::$ACR_ADMIN_PASSWORD"
           gh variable set ACR_NAME --repo NikodemSkalski/kubernetes --body "$ACR_NAME"
