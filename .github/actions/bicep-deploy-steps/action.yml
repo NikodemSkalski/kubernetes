@@ -83,7 +83,7 @@ runs:
         scope: 'resourceGroup'
         subscription-id: ${{ inputs.azure-subscription-id }}
         resource-group-name: ${{ inputs.azure-resource-group }}
-        bicep-file: '${{ inputs.bicep-file }}'
+        template-file: '${{ inputs.bicep-file }}'
         parameters-file: '${{ inputs.parameters-file-path }}'
 
 
@@ -97,5 +97,5 @@ runs:
         scope: 'resourceGroup'
         subscription-id: ${{ inputs.azure-subscription-id }}
         resource-group-name: ${{ inputs.azure-resource-group }}
-        bicep-file: '${{ inputs.bicep-file }}'
+        template-file: '${{ inputs.bicep-file }}'
         parameters-file: '${{ inputs.parameters-file-path }}'
