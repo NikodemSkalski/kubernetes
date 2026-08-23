@@ -99,3 +99,8 @@ runs:
         resource-group-name: ${{ inputs.azure-resource-group }}
         template-file: '${{ inputs.bicep-file }}'
         parameters-file: '${{ inputs.parameters-file-path }}'
+
+    - name: Output deployment outputs
+      shell: pwsh
+      run: |
+        echo "${{ toJSON(steps.bicep-deploy.outputs) }}"
