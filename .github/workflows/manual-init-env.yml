@@ -46,7 +46,7 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.generate-gh-token.outputs.token }} 
           ACR_NAME: ${{ fromJSON(steps.bicep-acr-deploy.outputs.deployment-outputs).registryName }}
-          RAW_OUTPUT: ${{ steps.bicep-acr-deploy.outputs.deployment-outputs }}
+          RAW_OUTPUT: ${{ fromJSON(steps.bicep-acr-deploy.outputs.deployment-outputs) }}
         run: |
           echo "RAW_OUTPUT=$RAW_OUTPUT"
           echo "ACR_NAME=$ACR_NAME"
