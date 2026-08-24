@@ -46,7 +46,7 @@ jobs:
         shell: pwsh
         env:
           ACR_NAME: ${{ vars.ACR_NAME }}
-          BICEP_TRUSTED_REGISTRIES: ${{ vars.ACR_LOGIN_SERVER }}
+          BICEP_TRUSTED_REGISTRIES: ${{ vars.ACR_NAME }}
         run: |
           $tag = "${{ github.run_id }}.${{ github.run_number }}.${{ github.run_attempt }}"
           $modulesRoot = "${{ github.workspace }}/bicep/modules/"
