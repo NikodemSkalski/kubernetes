@@ -102,9 +102,11 @@ runs:
 
     - name: Output deployment outputs
       shell: pwsh
+      env:
+        DEPLOY_OUTPUTS: ${{ toJSON(steps.bicep-deploy.outputs) }}
       run: |
-        ${{ steps.bicep-deploy.outputs }} | gm
-        $output = ${{ steps.bicep-deploy.outputs }} | ConvertFrom-Json -Depth 10
+        $env:DEPLOY_OUTPUTS | gm
+        $output = $env:DEPLOY_OUTPUTS | ConvertFrom-Json -Depth 10
         Write-Host "Deployment Outputs: $output"
         $output | gm
         echo "${{ toJSON(steps.bicep-deploy.outputs) }}"
