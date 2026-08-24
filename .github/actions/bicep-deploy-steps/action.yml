@@ -109,4 +109,5 @@ runs:
         $output = $env:DEPLOY_OUTPUTS | ConvertFrom-Json -Depth 10
         Write-Host "Deployment Outputs: $output"
         $output | gm
+        $output.PSObject.Properties | ForEach-Object { Write-Host "$($_.Name): $($_.Value)" }
         echo "${{ toJSON(steps.bicep-deploy.outputs) }}"
