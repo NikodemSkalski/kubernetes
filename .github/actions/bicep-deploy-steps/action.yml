@@ -105,9 +105,7 @@ runs:
       env:
         DEPLOY_OUTPUTS: ${{ toJSON(steps.bicep-deploy.outputs) }}
       run: |
-        $env:DEPLOY_OUTPUTS | gm
+        $outputArr = [System.Collections.Generic.List[string]]::new()
         $output = $env:DEPLOY_OUTPUTS | ConvertFrom-Json -Depth 10
-        Write-Host "Deployment Outputs: $output"
-        $output | gm
-        $output.PSObject.Properties | ForEach-Object { Write-Host "Values $($_.Name): $($_.Value)" }
-        echo "${{ toJSON(steps.bicep-deploy.outputs) }}"
+        $output.PSObject.Properties | ForEach-Object { $outputArr.Add("$($_.Name): $($_.Value)") }
+        $outputJson = $outputArr | ConvertTo-Json -Depth 10 -asArray
