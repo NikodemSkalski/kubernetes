@@ -46,6 +46,7 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.generate-gh-token.outputs.token }} 
           ACR_NAME: ${{ fromJSON(steps.bicep-acr-deploy.outputs.deployment-outputs).registryName }}
+          ACR_LOGIN_SERVER: ${{ fromJSON(steps.bicep-acr-deploy.outputs.deployment-outputs).registryLoginServer }}
         run: |
           echo "ACR_NAME=$env:ACR_NAME"
           $ACR_ADMIN_USERNAME=$(az acr credential show --name $env:ACR_NAME --query "username" -o tsv)
@@ -61,6 +62,7 @@ jobs:
           echo "::add-mask::$ACR_ADMIN_USERNAME"
           echo "::add-mask::$ACR_ADMIN_PASSWORD"
           gh variable set ACR_NAME --repo NikodemSkalski/kubernetes --body "$env:ACR_NAME"
+          gh variable set ACR_LOGIN_SERVER --repo NikodemSkalski/kubernetes --body "$env:ACR_LOGIN_SERVER"
           gh secret set ACR_ADMIN_USERNAME --repo NikodemSkalski/kubernetes --body "$ACR_ADMIN_USERNAME"
           gh secret set ACR_ADMIN_PASSWORD --repo NikodemSkalski/kubernetes --body "$ACR_ADMIN_PASSWORD"
           gh variable set ACR_NAME --repo NikodemSkalski/devops-labs --body "$env:ACR_NAME"
