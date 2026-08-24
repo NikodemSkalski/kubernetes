@@ -46,18 +46,14 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.generate-gh-token.outputs.token }} 
           ACR_NAME: ${{ fromJSON(steps.bicep-acr-deploy.outputs.deployment-outputs).registryName }}
-          RAW_OUTPUT: ${{ steps.bicep-acr-deploy.outputs.deployment-outputs }}
         run: |
-          echo "RAW_OUTPUT=$env:RAW_OUTPUT"
-          $output = $env:RAW_OUTPUT | ConvertFrom-Json
-          $output.PSObject.Properties | ForEach-Object { Write-Host "Here is: $($_.Name): $($_.Value)" }
           echo "ACR_NAME=$env:ACR_NAME"
-          $ACR_ADMIN_USERNAME=$(az acr credential show --name $ACR_NAME --query "username" -o tsv)
+          $ACR_ADMIN_USERNAME=$(az acr credential show --name $env:ACR_NAME --query "username" -o tsv)
           if(!$ACR_ADMIN_USERNAME) {
             Write-Host "ACR Admin Username is empty. Exiting."
             exit 1
           }
-          $ACR_ADMIN_PASSWORD=$(az acr credential show --name $ACR_NAME --query "passwords[0].value" -o tsv)
+          $ACR_ADMIN_PASSWORD=$(az acr credential show --name $env:ACR_NAME --query "passwords[0].value" -o tsv)
           if(!$ACR_ADMIN_PASSWORD) {
             Write-Host "ACR Admin Password is empty. Exiting."
             exit 1

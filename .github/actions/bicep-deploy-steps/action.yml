@@ -99,13 +99,3 @@ runs:
         resource-group-name: ${{ inputs.azure-resource-group }}
         template-file: '${{ inputs.bicep-file }}'
         parameters-file: '${{ inputs.parameters-file-path }}'
-
-    - name: Output deployment outputs
-      shell: pwsh
-      env:
-        DEPLOY_OUTPUTS: ${{ toJSON(steps.bicep-deploy.outputs) }}
-      run: |
-        $outputArr = [System.Collections.Generic.List[string]]::new()
-        $output = $env:DEPLOY_OUTPUTS | ConvertFrom-Json -Depth 10
-        $output.PSObject.Properties | ForEach-Object { $outputArr.Add("$($_.Name): $($_.Value)") }
-        $outputJson = $outputArr | ConvertTo-Json -Depth 10 -asArray
