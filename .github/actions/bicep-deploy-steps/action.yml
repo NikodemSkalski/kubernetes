@@ -103,7 +103,7 @@ runs:
     - name: Output deployment outputs
       shell: pwsh
       run: |
-        $output = ${{ steps.bicep-deploy.outputs }}
+        $output = ${{ fromJSON( steps.bicep-deploy.outputs ) }}
         Write-Host "Deployment Outputs: $output"
         $output | ConvertFrom-Json | ForEach-Object { Write-Host "$($_.Key): $($_.Value)" }
         echo "${{ toJSON(steps.bicep-deploy.outputs) }}"
