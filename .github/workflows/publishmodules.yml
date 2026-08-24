@@ -45,8 +45,8 @@ jobs:
       - name: Find and publish Bicep modules
         shell: pwsh
         env:
-          ACR_NAME: ${{ vars.ACR_NAME }}
-          BICEP_TRUSTED_REGISTRIES: ${{ vars.ACR_NAME }}
+          ACR_LOGIN_SERVER: ${{ vars.ACR_LOGIN_SERVER }}
+          BICEP_TRUSTED_REGISTRIES: ${{ vars.ACR_LOGIN_SERVER }}
         run: |
           $tag = "${{ github.run_id }}.${{ github.run_number }}.${{ github.run_attempt }}"
           $modulesRoot = "${{ github.workspace }}/bicep/modules/"
@@ -54,8 +54,8 @@ jobs:
           foreach ($item in $items) {
               $parentPath = $item.DirectoryName
               $relativePath = $parentPath.Replace($modulesRoot, "").Replace("\", "/")
-              $target = "br:$env:ACR_NAME/${relativePath}:${tag}"
-              $targetLatest = "br:$env:ACR_NAME/${relativePath}:latest"
+              $target = "br:$env:ACR_LOGIN_SERVER/${relativePath}:${tag}"
+              $targetLatest = "br:$env:ACR_LOGIN_SERVER/${relativePath}:latest"
               az bicep publish --file $item.FullName --target $target --with-source
               az bicep publish --file $item.FullName --target $targetLatest --with-source
           }
