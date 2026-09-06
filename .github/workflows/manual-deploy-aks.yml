@@ -18,7 +18,7 @@ jobs:
       acr-admin-username: ${{ vars.ACR_ADMIN_USERNAME }}
       acr-admin-password: ${{ vars.ACR_ADMIN_PASSWORD }}
       azure-resource-group: ${{ vars.AZURE_RESOURCE_GROUP }}
-      azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
+      azure-credentials: ${{ vars.AZURE_CREDENTIALS }}
 
   kubernetesdeploy:
     needs: call-bicep-deploy
