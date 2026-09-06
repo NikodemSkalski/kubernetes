@@ -17,10 +17,10 @@ jobs:
       acr-name: ${{ vars.ACR_NAME }}
       azure-resource-group: ${{ vars.AZURE_RESOURCE_GROUP }}
     secrets:
-      acr-admin-username: ${{ vars.ACR_ADMIN_USERNAME }}
-      acr-admin-password: ${{ vars.ACR_ADMIN_PASSWORD }}
-      azure-credentials: ${{ vars.AZURE_CREDENTIALS }}
-      azure-subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      acr-admin-username: ${{ secrets.ACR_ADMIN_USERNAME }}
+      acr-admin-password: ${{ secrets.ACR_ADMIN_PASSWORD }}
+      azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
+      azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
   kubernetesdeploy:
     needs: call-bicep-deploy
