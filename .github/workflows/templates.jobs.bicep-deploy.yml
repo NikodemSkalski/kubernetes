@@ -53,8 +53,8 @@ jobs:
           bicep-file: '${{ inputs.bicep-file }}'
           parameters-file-path: '${{ inputs.parameters-file-path }}'
           acr-name: ${{ inputs.acr-name }}
-          acr-admin-username: ${{ secrets.ACR_ADMIN_USERNAME }}
-          acr-admin-password: ${{ secrets.ACR_ADMIN_PASSWORD }}
-          azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
-          azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          azure-resource-group: ${{ secrets.AZURE_RESOURCE_GROUP }}
+          acr-admin-username: ${{ inputs.acr-admin-username }}
+          acr-admin-password: ${{ inputs.acr-admin-password }}
+          azure-credentials: ${{ inputs.azure-credentials }}
+          azure-subscription-id: ${{ inputs.azure-subscription-id }}
+          azure-resource-group: ${{ inputs.azure-resource-group }}
