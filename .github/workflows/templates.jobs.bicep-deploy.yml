@@ -18,23 +18,17 @@ on:
         required: true
         type: string
         default: ''
+    secrets:
       acr-admin-username:
         required: true
-        type: string
-        default: ''
       acr-admin-password:
         required: true
-        type: string
-        default: ''
       azure-credentials:
         required: true
-        type: string
       azure-subscription-id:
         required: true
-        type: string
       azure-resource-group:
         required: true
-        type: string
 
 jobs:
   bicepdeploy:
@@ -53,8 +47,8 @@ jobs:
           bicep-file: '${{ inputs.bicep-file }}'
           parameters-file-path: '${{ inputs.parameters-file-path }}'
           acr-name: ${{ inputs.acr-name }}
-          acr-admin-username: ${{ inputs.acr-admin-username }}
-          acr-admin-password: ${{ inputs.acr-admin-password }}
-          azure-credentials: ${{ inputs.azure-credentials }}
-          azure-subscription-id: ${{ inputs.azure-subscription-id }}
-          azure-resource-group: ${{ inputs.azure-resource-group }}
+          acr-admin-username: ${{ secrets.acr-admin-username }}
+          acr-admin-password: ${{ secrets.acr-admin-password }}
+          azure-credentials: ${{ secrets.azure-credentials }}
+          azure-subscription-id: ${{ secrets.azure-subscription-id }}
+          azure-resource-group: ${{ secrets.azure-resource-group }}
