@@ -18,6 +18,7 @@ jobs:
       acr-admin-username: ${{ vars.ACR_ADMIN_USERNAME }}
       acr-admin-password: ${{ vars.ACR_ADMIN_PASSWORD }}
       azure-resource-group: ${{ vars.AZURE_RESOURCE_GROUP }}
+      azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
 
   kubernetesdeploy:
     needs: call-bicep-deploy
@@ -45,9 +46,23 @@ jobs:
             $SAS_TOKEN = az storage container generate-sas --account-name $TERRAFORM_STORAGE_NAME --name $TERRAFORM_BLOB_CONTAINER_NAME --permissions rwdlc --expiry $expiry --https-only
             "::add-mask::$SAS_TOKEN" >> $env:GITHUB_OUTPUT
             "sas=$SAS_TOKEN" >> $env:GITHUB_OUTPUT
+            "state_blob_name=$TERRAFORM_BLOB_CONTAINER_NAME" >> $env:GITHUB_OUTPUT
 
       - name: Terraform init
-        working-directory: '${{ github.workspace }}/terraform'
+        working-directory: '${{ github.workspace }}/terraform/prod'
         env:
           ARM_SAS_TOKEN: ${{ steps.set-terraform-vars.outputs.sas }}
-        run: terraform init                
+        run: terraform init -backend-config="resource_group_name=${{ vars.AZURE_RESOURCE_GROUP }}"   -backend-config="storage_account_name=${{ vars.STORAGE_ACCOUNT_NAME }}"  -backend-config="container_name=${{ vars.BLOB_CONTAINER_NAME }}" -backend-config="key=${{ steps.set-terraform-vars.outputs.state_blob_name }}" -backend-config="sas_token=${{ steps.set-terraform-vars.outputs.sas }}"
+
+      - name: Terraform plan
+        working-directory: '${{ github.workspace }}/terraform/prod'
+        env:
+          ARM_SAS_TOKEN: ${{ steps.set-terraform-vars.outputs.sas }}
+        run: terraform plan -var="aks_name=${{ vars.AKS_NAME }}" -var="resource_group_name=${{ vars.AZURE_RESOURCE_GROUP }}" -var="location=${{ vars.AZURE_LOCATION }}" -var="kubernetes_version=${{ vars.KUBERNETES_VERSION }}" -var="role_based_access_control_enabled=${{ vars.RBAC_AAD_AZURE_RBAC_ENABLED }}" -var="private_dns_zone_id=${{ vars.PRIVATE_DNS_ZONE_ID }}" -var="tags=${{ vars.TAGS }}"
+      
+      - name: Terraform apply
+        working-directory: '${{ github.workspace }}/terraform/prod'
+        env:
+          ARM_SAS_TOKEN: ${{ steps.set-terraform-vars.outputs.sas }}
+        run: terraform apply -auto-approve -var="aks_name=${{ vars.AKS_NAME }}" -var="resource_group_name=${{ vars.AZURE_RESOURCE_GROUP }}" -var="location=${{ vars.AZURE_LOCATION }}" -var="kubernetes_version=${{ vars.KUBERNETES_VERSION }}" -var="role_based_access_control_enabled=${{ vars.RBAC_AAD_AZURE_RBAC_ENABLED }}" -var="private_dns_zone_id=${{ vars.PRIVATE_DNS_ZONE_ID }}" -var="tags=${{ vars.TAGS }}"
+
