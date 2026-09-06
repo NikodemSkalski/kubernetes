@@ -14,7 +14,7 @@ inputs:
     required: true
     type: string
     default: '${{ github.workspace }}/bicep/environments/dev.bicepparam'
-  acr-name:
+  acr-login-server:
     required: true
     type: string
     default: ''
@@ -53,13 +53,13 @@ runs:
 
     - name: Set alias for bicep modules
       shell: pwsh
-      if: ${{ inputs.acr-name != '' }}
+      if: ${{ inputs.acr-login-server != '' }}
       env:
-        ACR_NAME: ${{ inputs.acr-name }}
+        ACR_LOGIN_SERVER: ${{ inputs.acr-login-server }}
       run: |
           $bicepConfigPath = "${{ github.workspace }}/bicep/bicepconfig.json"
           $bicepConfig = Get-Content -Path $bicepConfigPath | ConvertFrom-Json
-          $bicepConfig.moduleAliases.br.develop.registry = "$env:ACR_NAME"
+          $bicepConfig.moduleAliases.br.develop.registry = "$env:ACR_LOGIN_SERVER"
           $bicepConfig | ConvertTo-Json -Depth 10 | Set-Content -Path $bicepConfigPath
 
     - name: Azure login
@@ -69,9 +69,9 @@ runs:
         
     - name: Login to ACR
       uses: docker/login-action@v3
-      if: ${{ inputs.acr-name != '' && inputs.acr-admin-username != '' && inputs.acr-admin-password != '' }}
+      if: ${{ inputs.acr-login-server != '' && inputs.acr-admin-username != '' && inputs.acr-admin-password != '' }}
       with:
-        registry: ${{ inputs.acr-name }}
+        registry: ${{ inputs.acr-login-server }}
         username: ${{ inputs.acr-admin-username }}
         password: ${{ inputs.acr-admin-password }}
 

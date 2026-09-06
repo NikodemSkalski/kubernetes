@@ -14,7 +14,7 @@ jobs:
       environment: development
       bicep-file: '${{ github.workspace }}/bicep/deployment.bicep'
       parameters-file-path: '${{ github.workspace }}/bicep/environments/dev.bicepparam'
-      acr-name: ${{ vars.ACR_NAME }}
+      acr-name: ${{ vars.ACR_LOGIN_SERVER }}
       azure-resource-group: ${{ vars.AZURE_RESOURCE_GROUP }}
     secrets:
       acr-admin-username: ${{ secrets.ACR_ADMIN_USERNAME }}
