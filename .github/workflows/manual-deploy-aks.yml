@@ -8,14 +8,23 @@ permissions:
 
 
 jobs:
+  resolve-env-vars:
+    runs-on: ubuntu-latest
+    environment: development
+    outputs:
+      resource-group: ${{ vars.AZURE_RESOURCE_GROUP }}
+    steps:
+      - run: echo "Resolving environment-scoped variables"
+
   call-bicep-deploy:
+    needs: resolve-env-vars
     uses: NikodemSkalski/kubernetes/.github/workflows/templates.jobs.bicep-deploy.yml@master
     with:
       environment: development
       bicep-file: '${{ github.workspace }}/bicep/deployment.bicep'
       parameters-file-path: '${{ github.workspace }}/bicep/environments/dev.bicepparam'
       acr-login-server: ${{ vars.ACR_LOGIN_SERVER }}
-      azure-resource-group: ${{ vars.AZURE_RESOURCE_GROUP }}
+      azure-resource-group: ${{ needs.resolve-env-vars.outputs.resource-group }}
     secrets:
       acr-admin-username: ${{ secrets.ACR_ADMIN_USERNAME }}
       acr-admin-password: ${{ secrets.ACR_ADMIN_PASSWORD }}
