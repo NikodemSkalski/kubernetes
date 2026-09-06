@@ -15,10 +15,12 @@ jobs:
       bicep-file: '${{ github.workspace }}/bicep/deployment.bicep'
       parameters-file-path: '${{ github.workspace }}/bicep/environments/dev.bicepparam'
       acr-name: ${{ vars.ACR_NAME }}
+      azure-resource-group: ${{ vars.AZURE_RESOURCE_GROUP }}
+    secrets:
       acr-admin-username: ${{ vars.ACR_ADMIN_USERNAME }}
       acr-admin-password: ${{ vars.ACR_ADMIN_PASSWORD }}
-      azure-resource-group: ${{ vars.AZURE_RESOURCE_GROUP }}
       azure-credentials: ${{ vars.AZURE_CREDENTIALS }}
+      azure-subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
   kubernetesdeploy:
     needs: call-bicep-deploy
