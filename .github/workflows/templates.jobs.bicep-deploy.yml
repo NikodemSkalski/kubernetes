@@ -33,7 +33,7 @@ on:
 
 jobs:
   bicepdeploy:
-    name: 'Storage account Deploment and validation'
+    name: 'Storage account Deployment and validation'
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
 

@@ -8,31 +8,30 @@ permissions:
 
 
 jobs:
-  resolve-env-vars:
+  bicepdeploy:
+    name: 'Storage account Deployment and validation'
     runs-on: ubuntu-latest
     environment: development
-    outputs:
-      resource-group: ${{ vars.AZURE_RESOURCE_GROUP }}
+
+    defaults:
+      run:
+        shell: pwsh
+
     steps:
-      - run: echo "Resolving environment-scoped variables"
+      - uses: nikodemskalski/kubernetes/.github/actions/bicep-deploy-steps@master
+        with:
+          bicep-file: '${{ github.workspace }}/bicep/deployment.bicep'
+          parameters-file-path: '${{ github.workspace }}/bicep/environments/dev.bicepparam'
+          acr-login-server: ${{ vars.ACR_LOGIN_SERVER }}
+          azure-resource-group: ${{ vars.AZURE_RESOURCE_GROUP }}
+          acr-admin-username: ${{ secrets.ACR_ADMIN_USERNAME }}
+          acr-admin-password: ${{ secrets.ACR_ADMIN_PASSWORD }}
+          azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
+          azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-  call-bicep-deploy:
-    needs: resolve-env-vars
-    uses: NikodemSkalski/kubernetes/.github/workflows/templates.jobs.bicep-deploy.yml@master
-    with:
-      environment: development
-      bicep-file: '${{ github.workspace }}/bicep/deployment.bicep'
-      parameters-file-path: '${{ github.workspace }}/bicep/environments/dev.bicepparam'
-      acr-login-server: ${{ vars.ACR_LOGIN_SERVER }}
-      azure-resource-group: ${{ needs.resolve-env-vars.outputs.resource-group }}
-    secrets:
-      acr-admin-username: ${{ secrets.ACR_ADMIN_USERNAME }}
-      acr-admin-password: ${{ secrets.ACR_ADMIN_PASSWORD }}
-      azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
-      azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
+          
   kubernetesdeploy:
-    needs: call-bicep-deploy
+    needs: bicepdeploy
     name: 'Deploy AKS'
     runs-on: ubuntu-latest
     environment: development
