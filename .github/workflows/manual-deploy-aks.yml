@@ -52,6 +52,11 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.9.8"
+          
       - name: Set STORAGE_NAME and BLOB_CONTAINER_NAME variables for terraform
         id: set-terraform-vars
         env:
