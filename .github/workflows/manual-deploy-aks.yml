@@ -12,7 +12,8 @@ jobs:
     name: 'Storage account Deployment and validation'
     runs-on: ubuntu-latest
     environment: development
-
+    outputs:
+      deployment-outputs: ${{ steps.bicep-deploy.outputs.deployment-outputs }}
     defaults:
       run:
         shell: pwsh
@@ -47,16 +48,17 @@ jobs:
 
       - name: Set STORAGE_NAME and BLOB_CONTAINER_NAME variables for terraform
         id: set-terraform-vars
+        env:
+          TERRAFORM_STORAGE_NAME: ${{ fromJSON(needs.bicepdeploy.outputs.deployment-outputs).storageAccountName }}
+          TERRAFORM_BLOB_CONTAINER_NAME: ${{ fromJSON(needs.bicepdeploy.outputs.deployment-outputs).blobContainerName }}
         run: |            
-            TERRAFORM_STORAGE_NAME=$(az deployment group show --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} --name deployGlobalStorage --query "properties.globalStorageAccount.outputs.storageAccountName.value" -o tsv)
-            TERRAFORM_BLOB_CONTAINER_NAME=$(az deployment group show --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} --name deployGlobalStorage --query "properties.globalStorageAccount.outputs.blobContainerName.value" -o tsv)
-            Write-Host "STORAGE_NAME=$TERRAFORM_STORAGE_NAME"
-            Write-Host "BLOB_CONTAINER_NAME=$TERRAFORM_BLOB_CONTAINER_NAME"
+            Write-Host "STORAGE_NAME=$env:TERRAFORM_STORAGE_NAME"
+            Write-Host "BLOB_CONTAINER_NAME=$env:TERRAFORM_BLOB_CONTAINER_NAME"
             $expiry = (Get-Date).ToUniversalTime().AddHours(1).ToString("yyyy-MM-ddTHH:mm:ssZ")
-            $SAS_TOKEN = az storage container generate-sas --account-name $TERRAFORM_STORAGE_NAME --name $TERRAFORM_BLOB_CONTAINER_NAME --permissions rwdlc --expiry $expiry --https-only
+            $SAS_TOKEN = az storage container generate-sas --account-name $env:TERRAFORM_STORAGE_NAME --name $env:TERRAFORM_BLOB_CONTAINER_NAME --permissions rwdlc --expiry $expiry --https-only
             "::add-mask::$SAS_TOKEN" >> $env:GITHUB_OUTPUT
             "sas=$SAS_TOKEN" >> $env:GITHUB_OUTPUT
-            "state_blob_name=$TERRAFORM_BLOB_CONTAINER_NAME" >> $env:GITHUB_OUTPUT
+            "state_blob_name=$env:TERRAFORM_BLOB_CONTAINER_NAME" >> $env:GITHUB_OUTPUT
 
       - name: Terraform init
         working-directory: '${{ github.workspace }}/terraform/prod'
