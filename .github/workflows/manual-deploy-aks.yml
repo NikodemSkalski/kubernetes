@@ -74,6 +74,8 @@ jobs:
       - name: Terraform init
         working-directory: '${{ github.workspace }}/terraform/prod'
         env:
+          TERRAFORM_STORAGE_NAME: ${{ needs.bicepdeploy.outputs.TERRAFORM_STORAGE_NAME }}
+          TERRAFORM_BLOB_CONTAINER_NAME: ${{ needs.bicepdeploy.outputs.TERRAFORM_BLOB_CONTAINER_NAME }}
           ARM_SAS_TOKEN: ${{ steps.set-terraform-vars.outputs.sas }}
           TF_STATE_KEY: ${{ steps.set-terraform-vars.outputs.state_blob_name }}
         run: terraform init -backend-config="resource_group_name=${{ vars.AZURE_RESOURCE_GROUP }}"   -backend-config="storage_account_name=$env:TERRAFORM_STORAGE_NAME"  -backend-config="container_name=$env:TERRAFORM_BLOB_CONTAINER_NAME" -backend-config="key=$env:TF_STATE_KEY"
