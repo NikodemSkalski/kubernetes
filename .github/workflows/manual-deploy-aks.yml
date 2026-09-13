@@ -38,6 +38,10 @@ jobs:
     name: 'Deploy AKS'
     runs-on: ubuntu-latest
     environment: development
+    defaults:
+      run:
+        shell: pwsh
+
 
     steps:
       - name: Checkout repo
