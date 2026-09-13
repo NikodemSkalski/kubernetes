@@ -13,7 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: development
     outputs:
-      deployment-outputs: ${{ steps.bicep-deploy-storage.outputs.deployment-outputs }}
+      TERRAFORM_STORAGE_NAME: ${{ fromJSON(steps.bicep-deploy-storage.outputs.deployment-outputs).storageAccountName }}
+      TERRAFORM_BLOB_CONTAINER_NAME: ${{ fromJSON(steps.bicep-deploy-storage.outputs.deployment-outputs).blobContainerName }}
     defaults:
       run:
         shell: pwsh
@@ -50,8 +51,8 @@ jobs:
       - name: Set STORAGE_NAME and BLOB_CONTAINER_NAME variables for terraform
         id: set-terraform-vars
         env:
-          TERRAFORM_STORAGE_NAME: ${{ fromJSON(needs.bicepdeploy.outputs.deployment-outputs).storageAccountName }}
-          TERRAFORM_BLOB_CONTAINER_NAME: ${{ fromJSON(needs.bicepdeploy.outputs.deployment-outputs).blobContainerName }}
+          TERRAFORM_STORAGE_NAME: ${{ needs.bicepdeploy.outputs.TERRAFORM_STORAGE_NAME }}
+          TERRAFORM_BLOB_CONTAINER_NAME: ${{ needs.bicepdeploy.outputs.TERRAFORM_BLOB_CONTAINER_NAME }}
         run: |            
             Write-Host "STORAGE_NAME=$env:TERRAFORM_STORAGE_NAME"
             Write-Host "BLOB_CONTAINER_NAME=$env:TERRAFORM_BLOB_CONTAINER_NAME"
