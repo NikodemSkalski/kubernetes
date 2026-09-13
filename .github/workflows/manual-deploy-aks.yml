@@ -87,7 +87,7 @@ jobs:
           TERRAFORM_BLOB_CONTAINER_NAME: ${{ needs.bicepdeploy.outputs.TERRAFORM_BLOB_CONTAINER_NAME }}
           ARM_SAS_TOKEN: ${{ steps.set-terraform-vars.outputs.sas }}
           TF_STATE_KEY: ${{ steps.set-terraform-vars.outputs.state_blob_name }}
-        run: terraform plan -var-file="${{ github.workspace }}/terraform/prod/terraform.tfvars" 
+        run: terraform plan -var-file="${{ github.workspace }}/terraform/prod/terraform.tfvars"  -var="resource_group_name=${{ vars.AZURE_RESOURCE_GROUP }}"
       
       - name: Terraform apply
         working-directory: '${{ github.workspace }}/terraform/prod'
