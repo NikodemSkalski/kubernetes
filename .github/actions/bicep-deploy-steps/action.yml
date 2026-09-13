@@ -4,11 +4,11 @@ description: Reusable composite action for deploying Bicep templates
 
 inputs:
   bicep-file:
-    required: true
+    required: false
     type: string
     default: '${{ github.workspace }}/bicep/deployment.bicep'
   parameters-file-path:
-    required: true
+    required: false
     type: string
     default: '${{ github.workspace }}/bicep/environments/dev.bicepparam'
   bicep-deployment-name:
@@ -16,18 +16,18 @@ inputs:
     type: string
     default: 'bicepDeployment'
   acr-login-server:
-    required: true
+    required: false
     type: string
     default: ''
   azure-resource-group:
-    required: true
+    required: false
     type: string
   acr-admin-username:
-    required: true
+    required: false
     type: string
     default: ''
   acr-admin-password:
-    required: true
+    required: false
     type: string
     default: ''
   azure-credentials:

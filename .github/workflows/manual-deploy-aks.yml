@@ -13,13 +13,14 @@ jobs:
     runs-on: ubuntu-latest
     environment: development
     outputs:
-      deployment-outputs: ${{ steps.bicep-deploy.outputs.deployment-outputs }}
+      deployment-outputs: ${{ steps.bicep-deploy-storage.outputs.deployment-outputs }}
     defaults:
       run:
         shell: pwsh
 
     steps:
-      - uses: nikodemskalski/kubernetes/.github/actions/bicep-deploy-steps@master
+      - id: bicep-deploy-storage
+        uses: nikodemskalski/kubernetes/.github/actions/bicep-deploy-steps@master
         with:
           bicep-file: '${{ github.workspace }}/bicep/deployment.bicep'
           parameters-file-path: '${{ github.workspace }}/bicep/environments/dev.bicepparam'
