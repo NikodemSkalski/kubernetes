@@ -62,7 +62,7 @@ jobs:
             Write-Host "BLOB_CONTAINER_NAME=$env:TERRAFORM_BLOB_CONTAINER_NAME"
             $expiry = (Get-Date).ToUniversalTime().AddHours(1).ToString("yyyy-MM-ddTHH:mm:ssZ")
             $SAS_TOKEN = az storage container generate-sas --account-name $env:TERRAFORM_STORAGE_NAME --name $env:TERRAFORM_BLOB_CONTAINER_NAME --permissions rwdlc --expiry $expiry --https-only
-            "::add-mask::$SAS_TOKEN" >> $env:GITHUB_OUTPUT
+            Write-Host "::add-mask::$SAS_TOKEN"
             "sas=$SAS_TOKEN" >> $env:GITHUB_OUTPUT
             "state_blob_name=$env:TERRAFORM_BLOB_CONTAINER_NAME" >> $env:GITHUB_OUTPUT
 
@@ -70,7 +70,8 @@ jobs:
         working-directory: '${{ github.workspace }}/terraform/prod'
         env:
           ARM_SAS_TOKEN: ${{ steps.set-terraform-vars.outputs.sas }}
-        run: terraform init -backend-config="resource_group_name=${{ vars.AZURE_RESOURCE_GROUP }}"   -backend-config="storage_account_name=${{ vars.STORAGE_ACCOUNT_NAME }}"  -backend-config="container_name=${{ vars.BLOB_CONTAINER_NAME }}" -backend-config="key=${{ steps.set-terraform-vars.outputs.state_blob_name }}" -backend-config="sas_token=${{ steps.set-terraform-vars.outputs.sas }}"
+          TF_STATE_KEY: ${{ steps.set-terraform-vars.outputs.state_blob_name }}
+        run: terraform init -backend-config="resource_group_name=${{ vars.AZURE_RESOURCE_GROUP }}"   -backend-config="storage_account_name=${{ vars.STORAGE_ACCOUNT_NAME }}"  -backend-config="container_name=${{ vars.BLOB_CONTAINER_NAME }}" -backend-config="key=$env:TF_STATE_KEY"
 
       - name: Terraform plan
         working-directory: '${{ github.workspace }}/terraform/prod'
