@@ -66,7 +66,7 @@ jobs:
             Write-Host "STORAGE_NAME=$env:TERRAFORM_STORAGE_NAME"
             Write-Host "BLOB_CONTAINER_NAME=$env:TERRAFORM_BLOB_CONTAINER_NAME"
             $expiry = (Get-Date).ToUniversalTime().AddHours(1).ToString("yyyy-MM-ddTHH:mm:ssZ")
-            $SAS_TOKEN = az storage container generate-sas --account-name $env:TERRAFORM_STORAGE_NAME --name $env:TERRAFORM_BLOB_CONTAINER_NAME --permissions rwdlc --expiry $expiry --https-only
+            $SAS_TOKEN = az storage container generate-sas --account-name $env:TERRAFORM_STORAGE_NAME --name $env:TERRAFORM_BLOB_CONTAINER_NAME --permissions rwdlc --expiry $expiry --https-only --output tsv
             Write-Host "::add-mask::$SAS_TOKEN"
             "sas=$SAS_TOKEN" >> $env:GITHUB_OUTPUT
             "state_blob_name=$env:TERRAFORM_BLOB_CONTAINER_NAME" >> $env:GITHUB_OUTPUT
