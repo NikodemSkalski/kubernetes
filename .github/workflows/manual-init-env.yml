@@ -2,6 +2,16 @@ name: 'manual-init-env'
 
 on:
   workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy'
+        required: true
+        default: 'development'
+        type: choice
+        options:
+          - development
+          - staging
+          - production
 
 permissions:
   contents: read
@@ -11,7 +21,7 @@ jobs:
   bicepdeploy:
     name: 'Deploy ACR and set secrets'
     runs-on: ubuntu-latest
-    environment: development
+    environment: ${{ github.event.inputs.environment }}
 
     defaults:
       run:
@@ -24,9 +34,9 @@ jobs:
       - id: bicep-acr-deploy
         uses: nikodemskalski/kubernetes/.github/actions/bicep-deploy-steps@master
         with:
-          environment: development
+          environment: ${{ github.event.inputs.environment }}
           bicep-file: '${{ github.workspace }}/bicep/ACR/acr.deployment.bicep'
-          parameters-file-path: '${{ github.workspace }}/bicep/ACR/environments/dev.bicepparam'
+          parameters-file-path: '${{ github.workspace }}/bicep/ACR/environments/${{ github.event.inputs.environment }}.bicepparam'
           azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
           azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           azure-resource-group: ${{ vars.AZURE_RESOURCE_GROUP }}
@@ -47,6 +57,7 @@ jobs:
           GH_TOKEN: ${{ steps.generate-gh-token.outputs.token }} 
           ACR_NAME: ${{ fromJSON(steps.bicep-acr-deploy.outputs.deployment-outputs).registryName }}
           ACR_LOGIN_SERVER: ${{ fromJSON(steps.bicep-acr-deploy.outputs.deployment-outputs).registryLoginServer }}
+          GH_ENVIRONMENT: ${{ github.event.inputs.environment }}
         run: |
           echo "ACR_NAME=$env:ACR_NAME"
           $ACR_ADMIN_USERNAME=$(az acr credential show --name $env:ACR_NAME --query "username" -o tsv)
@@ -62,9 +73,9 @@ jobs:
           echo "::add-mask::$ACR_ADMIN_USERNAME"
           echo "::add-mask::$ACR_ADMIN_PASSWORD"
           gh variable set ACR_NAME --repo NikodemSkalski/kubernetes --body "$env:ACR_NAME"
-          gh variable set ACR_LOGIN_SERVER --repo NikodemSkalski/kubernetes --body "$env:ACR_LOGIN_SERVER"
-          gh secret set ACR_ADMIN_USERNAME --repo NikodemSkalski/kubernetes --body "$ACR_ADMIN_USERNAME"
-          gh secret set ACR_ADMIN_PASSWORD --repo NikodemSkalski/kubernetes --body "$ACR_ADMIN_PASSWORD"
-          gh variable set ACR_NAME --repo NikodemSkalski/devops-labs --body "$env:ACR_NAME"
-          gh secret set ACR_ADMIN_USERNAME --repo NikodemSkalski/devops-labs --body "$ACR_ADMIN_USERNAME"
-          gh secret set ACR_ADMIN_PASSWORD --repo NikodemSkalski/devops-labs --body "$ACR_ADMIN_PASSWORD"
+          gh variable set ACR_LOGIN_SERVER --repo NikodemSkalski/kubernetes --body "$env:ACR_LOGIN_SERVER"  --env $env:GH_ENVIRONMENT
+          gh secret set ACR_ADMIN_USERNAME --repo NikodemSkalski/kubernetes --body "$ACR_ADMIN_USERNAME" --env $env:GH_ENVIRONMENT
+          gh secret set ACR_ADMIN_PASSWORD --repo NikodemSkalski/kubernetes --body "$ACR_ADMIN_PASSWORD" --env $env:GH_ENVIRONMENT
+          gh variable set ACR_NAME --repo NikodemSkalski/devops-labs --body "$env:ACR_NAME" --env $env:GH_ENVIRONMENT
+          gh secret set ACR_ADMIN_USERNAME --repo NikodemSkalski/devops-labs --body "$ACR_ADMIN_USERNAME" --env $env:GH_ENVIRONMENT
+          gh secret set ACR_ADMIN_PASSWORD --repo NikodemSkalski/devops-labs --body "$ACR_ADMIN_PASSWORD" --env $env:GH_ENVIRONMENT
