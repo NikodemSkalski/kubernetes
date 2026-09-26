@@ -72,7 +72,7 @@ jobs:
           }
           echo "::add-mask::$ACR_ADMIN_USERNAME"
           echo "::add-mask::$ACR_ADMIN_PASSWORD"
-          gh variable set ACR_NAME --repo NikodemSkalski/kubernetes --body "$env:ACR_NAME"
+          gh variable set ACR_NAME --repo NikodemSkalski/kubernetes --body "$env:ACR_NAME" --env $env:GH_ENVIRONMENT
           gh variable set ACR_LOGIN_SERVER --repo NikodemSkalski/kubernetes --body "$env:ACR_LOGIN_SERVER"  --env $env:GH_ENVIRONMENT
           gh secret set ACR_ADMIN_USERNAME --repo NikodemSkalski/kubernetes --body "$ACR_ADMIN_USERNAME" --env $env:GH_ENVIRONMENT
           gh secret set ACR_ADMIN_PASSWORD --repo NikodemSkalski/kubernetes --body "$ACR_ADMIN_PASSWORD" --env $env:GH_ENVIRONMENT
