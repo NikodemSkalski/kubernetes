@@ -7,6 +7,9 @@ terraform {
       version = ">= 4, <5"
     }
   }
+  
+  backend "azurerm" {}
+}
 
 provider "azurerm" {
   features {}
