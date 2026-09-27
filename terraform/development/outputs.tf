@@ -5,6 +5,7 @@ output "fqdn" {
 output "kube_config_raw" {
   description = "Raw Kubernetes config for the cluster user"
   value       = module.aks.kube_config_raw
+  sensitive   = true
 }
 
 output "oidc_issuer_url" {
