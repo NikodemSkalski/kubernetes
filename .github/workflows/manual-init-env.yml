@@ -34,7 +34,6 @@ jobs:
       - id: bicep-acr-deploy
         uses: nikodemskalski/kubernetes/.github/actions/bicep-deploy-steps@master
         with:
-          environment: ${{ github.event.inputs.environment }}
           bicep-file: '${{ github.workspace }}/bicep/ACR/acr.deployment.bicep'
           parameters-file-path: '${{ github.workspace }}/bicep/ACR/environments/${{ github.event.inputs.environment }}.bicepparam'
           azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}

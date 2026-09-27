@@ -1,6 +1,16 @@
 name: 'publishmodules'
 on:
   workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy'
+        required: true
+        default: 'development'
+        type: choice
+        options:
+          - development
+          - staging
+          - production
 
 permissions:
   contents: read
@@ -9,7 +19,7 @@ jobs:
   publishmodules:
     name: 'Publish Bicep Modules'
     runs-on: ubuntu-latest
-    environment: development
+    environment: ${{ github.event.inputs.environment }}
 
     steps:
       - name: Checkout repo
