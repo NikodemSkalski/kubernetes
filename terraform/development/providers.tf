@@ -7,11 +7,6 @@ terraform {
       version = ">= 4, <5"
     }
   }
-  
-  backend "azurerm" {
-    use_azuread_auth     = true 
-  }
-}
 
 provider "azurerm" {
   features {}
