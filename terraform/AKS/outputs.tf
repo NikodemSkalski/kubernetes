@@ -27,11 +27,13 @@ output "kube_admin_config" {
 output "kube_admin_config_raw" {
   description = "Raw Kubernetes config for the admin account"
   value       = azurerm_kubernetes_cluster.this.kube_admin_config_raw
+  sensitive   = true
 }
 
 output "kube_config" {
   description = "The kube_config block for the Azure Kubernetes Managed Cluster"
   value       = azurerm_kubernetes_cluster.this.kube_config
+  sensitive   = true
 }
 
 output "node_resource_group" {

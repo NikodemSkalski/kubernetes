@@ -3,6 +3,10 @@
 @maxLength(50)
 param name string = ''
 
+@description('Optional. Name of your Environment.')
+@maxLength(50)
+param environment string = 'development'
+
 @description('Optional. Enable admin user that have push / pull permission to the registry.')
 param acrAdminUserEnabled bool = false
 
@@ -68,8 +72,11 @@ param dataEndpointEnabled bool = false
 
 @description('Optional. Enables registry-wide pull from unauthenticated clients. It\'s in preview and available in the Standard and Premium service tiers.')
 param anonymousPullEnabled bool = false
-
-var registryName = empty(name) ? 'acr${take('${uniqueString(resourceGroup().id)}', 8)}' : name
+var envMap = {
+  production: 'prod'
+  development: 'dev'
+}
+var registryName = empty(name) ? 'acr${envMap[environment]}${take('${uniqueString(resourceGroup().id)}', 8)}' : name
 
 resource registry 'Microsoft.ContainerRegistry/registries@2021-08-01-preview' = {
   name: registryName
