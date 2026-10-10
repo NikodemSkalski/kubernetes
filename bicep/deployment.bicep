@@ -6,7 +6,7 @@ param storageName string = ''
 param location string = resourceGroup().location
 
 @description('Optional. The environment of the resource')
-param environment string = 'dev'
+param environment string = 'development'
 
 @description('Optional. The kind of the storage account')
 @allowed([

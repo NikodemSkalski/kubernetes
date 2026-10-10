@@ -22,6 +22,7 @@ output "identity_tenant_id" {
 output "kube_admin_config" {
   description = "The kube_admin_config block for the Azure Kubernetes Managed Cluster"
   value       = azurerm_kubernetes_cluster.this.kube_admin_config
+  sensitive   = true
 }
 
 output "kube_admin_config_raw" {
