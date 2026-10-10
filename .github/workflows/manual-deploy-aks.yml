@@ -31,7 +31,7 @@ jobs:
 
     steps:
       - id: bicep-deploy-storage
-        uses: nikodemskalski/kubernetes/.github/actions/bicep-deploy-steps@master
+        uses: ../actions/bicep-deploy-steps
         with:
           bicep-file: '${{ github.workspace }}/bicep/deployment.bicep'
           parameters-file-path: '${{ github.workspace }}/bicep/environments/${{ github.event.inputs.environment }}.bicepparam'
