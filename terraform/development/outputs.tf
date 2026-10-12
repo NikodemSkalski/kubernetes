@@ -12,3 +12,8 @@ output "oidc_issuer_url" {
   description = "OIDC issuer URL for the cluster"
   value = module.aks.oidc_issuer_url
 }
+
+output "aks_cluster_name" {
+  description = "Name of the AKS cluster"
+  value = module.aks.cluster_name
+}
