@@ -52,7 +52,7 @@ jobs:
       run:
         shell: pwsh
     outputs:
-      cluster_name: ${{ steps.tf-apply.outputs.cluster_name }}
+      CLUSTER_NAME: ${{ steps.tf-output.outputs.cluster_name }}
    
     steps:
       - name: Checkout repo
@@ -102,13 +102,22 @@ jobs:
       
       - name: Terraform apply
         working-directory: '${{ github.workspace }}/terraform/${{ github.event.inputs.environment }}'
-        id: tf-apply
         env:
           TERRAFORM_STORAGE_NAME: ${{ needs.bicepdeploy.outputs.TERRAFORM_STORAGE_NAME }}
           TERRAFORM_BLOB_CONTAINER_NAME: ${{ needs.bicepdeploy.outputs.TERRAFORM_BLOB_CONTAINER_NAME }}
           ARM_SAS_TOKEN: ${{ steps.set-terraform-vars.outputs.sas }}
           TF_STATE_KEY: ${{ steps.set-terraform-vars.outputs.state_container_name }}
         run: terraform apply -auto-approve -var-file="${{ github.workspace }}/terraform/${{ github.event.inputs.environment }}/terraform.tfvars" -var="resource_group_name=${{ vars.AZURE_RESOURCE_GROUP }}" 
+
+      - name: Terraform outputs
+        id: tf-out
+        working-directory: '${{ github.workspace }}/terraform/${{ github.event.inputs.environment }}'
+        env:
+          ARM_SAS_TOKEN: ${{ steps.set-terraform-vars.outputs.sas }}
+        run: |
+          $name = terraform output -raw cluster_name
+          Write-Host "cluster_name=$name"
+          "cluster_name=$name" >> $env:GITHUB_OUTPUT
 
   argocddeploy:
     needs: kubernetesdeploy
@@ -134,7 +143,7 @@ jobs:
         uses: azure/aks-set-context@v3
         with:
           resource-group: ${{ vars.AZURE_RESOURCE_GROUP }}
-          cluster-name: ${{ needs.kubernetesdeploy.outputs.cluster_name }}
+          cluster-name: ${{ needs.kubernetesdeploy.outputs.CLUSTER_NAME }}
           admin: 'false'
           use-kubelogin: 'true'
 
