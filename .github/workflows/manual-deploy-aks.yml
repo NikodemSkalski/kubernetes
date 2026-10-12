@@ -110,7 +110,7 @@ jobs:
         run: terraform apply -auto-approve -var-file="${{ github.workspace }}/terraform/${{ github.event.inputs.environment }}/terraform.tfvars" -var="resource_group_name=${{ vars.AZURE_RESOURCE_GROUP }}" 
 
       - name: Terraform outputs
-        id: tf-out
+        id: tf-output
         working-directory: '${{ github.workspace }}/terraform/${{ github.event.inputs.environment }}'
         env:
           ARM_SAS_TOKEN: ${{ steps.set-terraform-vars.outputs.sas }}
